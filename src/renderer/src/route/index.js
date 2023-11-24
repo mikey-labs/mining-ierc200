@@ -1,0 +1,15 @@
+import { createRouter, createWebHistory } from 'vue-router'
+import Main from '../views/Main/Index.vue';
+import Config from '../views/Config/Index.vue';
+import Runner from '../views/Runner/Index.vue';
+const routes = [
+  { path: '/', component: Main },
+  { path: '/config', component: Config },
+  { path: '/runner', component: Runner }
+];
+const router = createRouter({
+  // 4. Provide the history implementation to use. We are using the hash history for simplicity here.
+  history: createWebHistory(),
+  routes // short for `routes: routes`
+})
+export default router;
