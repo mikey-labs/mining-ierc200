@@ -1,10 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Main from '../views/Main/Index.vue';
-import Config from '../views/Config/Index.vue';
 import Runner from '../views/Runner/Index.vue';
 const routes = [
   { path: '/', component: Main },
-  { path: '/config', component: Config },
   { path: '/runner', component: Runner }
 ];
 const router = createRouter({

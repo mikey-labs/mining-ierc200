@@ -19,7 +19,11 @@
   "dependencies": {
     "@electron-toolkit/preload": "^2.0.0",
     "@electron-toolkit/utils": "^2.0.0",
+    "axios": "^1.6.2",
+    "bignumber.js": "^9.1.2",
+    "dayjs": "^1.11.10",
     "electron-updater": "^6.1.1",
+    "ethers": "5",
     "vue-router": "4"
   },
   "devDependencies": {
