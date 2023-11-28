@@ -3,9 +3,9 @@ import { computed, ref } from 'vue';
 import icon_check from '../../assets/check.svg';
 import icon_uncheck from '../../assets/uncheck.svg';
 import icon_mining from '../../assets/icon_mining.svg';
-import icon_back from '../../assets/icon-back.svg';
 import { useRouter } from 'vue-router';
 import { ethers } from 'ethers';
+import { PROVIDER_RPC_MAIN } from './constant';
 
 const router = useRouter();
 const checkValue = ref('ierc-m5');
@@ -21,10 +21,13 @@ const checkBoxData = [
   }
 ];
 const loading = ref(false);
+const showDropDownList = ref(false);
+const selectValue = ref(PROVIDER_RPC_MAIN[0]);
 const key = localStorage.getItem('privateKey') || '';
 
 const inputValue = ref(key);
-const canSubmit = computed(() => !!inputValue.value);
+const amtValue = ref(1);
+const canSubmit = computed(() => !!inputValue.value && Number(amtValue.value) > 0);
 const submit = () => {
   if (canSubmit.value) {
     try {
@@ -33,9 +36,11 @@ const submit = () => {
       router.push({
         path: '/runner',
         query: {
+          amt: amtValue.value,
           privateKey: inputValue.value,
           tick: checkValue.value,
-          address: wallet.address
+          address: wallet.address,
+          PROVIDER_RPC: selectValue.value.value
         }
       });
     } catch (e) {
@@ -43,45 +48,136 @@ const submit = () => {
     }
   }
 };
-const back = () => {
-  localStorage.clear();
-  router.back();
+const selectorChange = (item) => {
+  selectValue.value = item;
+  showDropDownList.value = !showDropDownList.value;
 };
 </script>
 
 <template>
   <main>
-    <div class="back" @click="back">
-      <img :src="icon_back" alt="" />
-    </div>
     <div class="header">
       <div>
-        <div>IERC200 挖矿工具</div>
+        <div>IERC20 采矿工具</div>
       </div>
     </div>
     <div class="form">
       <div class="label">配置数据</div>
-      <div class="row shadow">
-        <div
-          v-for="(item, i) in checkBoxData"
-          :key="i"
-          class="radio-group"
-          @click="checkValue = item.value"
-        >
-          <img :src="checkValue === item.value ? icon_check : icon_uncheck" alt="" />
-          <span style="margin-left: 4px">{{ item.label }}</span>
+      <div class="row shadow col">
+        <div class="selector-wrapper">
+          <div class="selector" @click="showDropDownList = !showDropDownList">
+            {{ selectValue.label }}
+            <img src="../../assets/arrow.svg" alt="" />
+          </div>
+          <transition duration="500" name="slideIn">
+            <div v-show="showDropDownList" class="list">
+              <div
+                v-for="(item, i) in PROVIDER_RPC_MAIN"
+                :key="i"
+                class="item"
+                @click="selectorChange(item)"
+              >
+                <div>
+                  {{ item.label }}
+                </div>
+                <div class="tip">{{ item.value }}</div>
+              </div>
+            </div>
+          </transition>
+        </div>
+        <div class="amt-wrapper">
+          <input v-model="amtValue" class="amt-input" placeholder="配置采矿数量" />
+        </div>
+        <div class="flex" style="margin-top: 16px">
+          <div
+            v-for="(item, i) in checkBoxData"
+            :key="i"
+            class="radio-group"
+            @click="checkValue = item.value"
+          >
+            <img :src="checkValue === item.value ? icon_check : icon_uncheck" alt="" />
+            <span style="margin-left: 4px">{{ item.label }}</span>
+          </div>
         </div>
       </div>
-      <input v-model="inputValue" class="row input shadow" placeholder="填写您钱包账户地址" />
+      <input v-model="inputValue" class="row input shadow" placeholder="填写钱包私钥" />
       <button class="submit shadow" :class="{ disable: loading || !canSubmit }" @click="submit">
         <img :src="icon_mining" :class="{ loading }" alt="" />
-        <span>开始挖矿</span>
+        <span>开始采矿</span>
       </button>
     </div>
   </main>
 </template>
 
 <style scoped lang="less">
+.flex {
+  display: flex;
+  align-items: center;
+}
+.amt-wrapper {
+  margin-top: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #404040;
+  width: 100%;
+  .amt-input {
+    width: 266px;
+    background: #404040;
+    padding: 9px 16px;
+    border-radius: 40px;
+    color: #ccc;
+    font-size: 16px;
+    outline: none;
+    border: none;
+  }
+}
+.selector-wrapper {
+  position: relative;
+  border-bottom: 1px solid #404040;
+  padding: 0 0 16px 0;
+  margin: 0 16px;
+  width: 100%;
+  .selector {
+    cursor: pointer;
+    width: 266px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 16px;
+    background: #404040;
+    border-radius: 40px;
+    color: #ccc;
+    font-size: 16px;
+    &:hover {
+      background: #454545;
+    }
+  }
+  .list {
+    position: absolute;
+    top: 40px;
+    left: 0;
+    width: 266px;
+    background: #404040;
+    border-radius: 8px;
+    max-height: 220px;
+    overflow: auto;
+    .item {
+      &:hover {
+        background: #454545;
+      }
+      cursor: pointer;
+      font-size: 16px;
+      color: #999;
+      padding: 16px;
+      border-bottom: 1px solid #555;
+      .tip {
+        word-break: break-all;
+        font-size: 12px;
+        color: #888;
+        margin-top: 4px;
+      }
+    }
+  }
+}
 .shadow {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
 }
@@ -103,7 +199,7 @@ const back = () => {
   animation: linear 1s infinite rotate;
 }
 .header {
-  padding-top: 75px;
+  padding-top: 30px;
   display: flex;
   font-size: 32px;
   flex-direction: column;
@@ -125,13 +221,16 @@ const back = () => {
     background: #303030;
     border-radius: 8px;
     display: flex;
-    padding: 0 20px;
+    padding: 16px 20px;
     align-items: center;
-    height: 60px;
     margin-bottom: 24px;
+    &.col {
+      flex-direction: column;
+    }
   }
   .radio-group {
     display: flex;
+    color: #ccc;
     align-items: center;
     cursor: pointer;
     margin-right: 93px;
@@ -171,5 +270,20 @@ const back = () => {
       cursor: default;
     }
   }
+}
+.slideIn-enter-from,
+.slideIn-leave-to {
+  height: 0;
+}
+// 元素进入结束的状态 ｜ 元素开始离开的状态。 这里不写也可以！！！！！！
+.slideIn-enter-to,
+.slideIn-leave-from {
+  height: 220px;
+}
+// 元素进入 ｜ 结束时，过渡的效果
+.slideIn-enter-active,
+.slideIn-leave-active {
+  // 过渡动画的使用
+  transition: height 0.5s;
 }
 </style>

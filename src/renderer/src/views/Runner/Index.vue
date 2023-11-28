@@ -1,14 +1,15 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import icon_back from '../../assets/icon-back.svg';
 import icon_play from '../../assets/icon-play.svg';
 import icon_stop from '../../assets/icon-stop.svg';
 import { useRoute, useRouter } from 'vue-router';
 import { ethers } from 'ethers';
-import { GAS_PREMIUM, PROVIDER_RPC, ZERO_ADDRESS } from '../Main/constant';
+import { GAS_PREMIUM, ZERO_ADDRESS } from '../Main/constant';
 import dayjs from 'dayjs';
 import { stringToHex } from './hex';
 import { bnUtils } from './bn';
+const block = ref(null);
 const sleep = async (time) => {
   return new Promise((resolve) => {
     setTimeout(() => {
@@ -32,15 +33,15 @@ const router = useRouter();
 const route = useRoute();
 const tokens = {
   'ierc-m4': {
-    workc: '0x0000',
-    amt: '1000'
+    workc: '0x0000'
+    // amt: '100'
   },
   'ierc-m5': {
-    workc: '0x00000',
-    amt: '1000'
+    workc: '0x00000'
+    // amt: '1000'
   }
 };
-const { tick, address, privateKey } = route.query;
+const { tick, address, privateKey, PROVIDER_RPC, amt } = route.query;
 const running = ref(true);
 const lines = ref([]);
 const logger = (info, color = 'green') => {
@@ -48,42 +49,43 @@ const logger = (info, color = 'green') => {
     text: info,
     color: color
   });
+  block.value.scrollTop = block.value.scrollHeight;
 };
 const run = async () => {
-  logger(`Start mining with ${address}`);
-  const { amt, workc } = tokens[tick];
+  logger(`您使用的账户地址为： ${address}`);
+  const { workc } = tokens[tick];
   const provider = new ethers.providers.JsonRpcProvider(PROVIDER_RPC);
   const miner = new ethers.Wallet(privateKey, provider);
 
   const network = await provider.getNetwork();
-  logger(`network is ${network.name} (chainID: ${network.chainId})`);
+  logger(`使用的网络 ${network.name} (链ID: ${network.chainId})`, 'blue');
   if (!running.value) {
-    logger('Script stopped!', 'red');
+    logger('停止脚本成功!', 'red');
     return;
   }
   const currentGasPrice = await provider.getGasPrice();
   const targetGasFee = currentGasPrice.div(100).mul(GAS_PREMIUM);
 
-  logger(`Current gas price usage ${bnUtils.fromWei(targetGasFee.toString(), 9)} gwei`);
+  logger(`当前 gas 费用： ${bnUtils.fromWei(targetGasFee.toString(), 9)} gwei`);
   const nonce = await miner.getTransactionCount();
   if (!running.value) {
-    logger('Script stopped!', 'red');
+    logger('停止脚本成功!', 'red');
     return;
   }
-  logger(`nonce is ${nonce}`);
+  logger(`随机串为： ${nonce}`);
   const balance = await miner.getBalance();
   if (!running.value) {
-    logger('Script stopped!', 'red');
+    logger('停止脚本成功!', 'red');
     return;
   }
-  logger(`balance is ${bnUtils.fromWei(balance.toString(), 18).dp(4).toString()}`);
+  logger(`您的余额为： ${bnUtils.fromWei(balance.toString(), 18).dp(4).toString()}`);
 
-  logger(`The current mining difficulty is ${workc}`);
-  logger(`Expected to take 1-2 minutes to calculate...`);
-  logger('start mining...', 'blue');
+  logger(`设置的采矿数量：${amt},当前采矿难度为： ${workc}`);
+  logger(`预计需要1-2分钟进行计算...`);
+  logger('开始采矿...', 'blue');
   await sleep(1000);
   if (!running.value) {
-    logger('Script stopped!', 'red');
+    logger('停止脚本成功!', 'red');
     return;
   }
   let timer = Date.now(),
@@ -124,7 +126,7 @@ const run = async () => {
     if (now - timer > 100) {
       await sleep(1);
       if (!running.value) {
-        logger('Script stopped!', 'red');
+        logger('停止脚本成功!', 'red');
         return;
       }
       logger(
@@ -139,37 +141,38 @@ const run = async () => {
       logger(`${mineCount} - ${predictedTransactionHash}`, 'green');
       const mineTime = (Date.now() - startTimer) / 1000;
       logger(
-        `Total time spent ${mineTime}s, average arithmetic ${Math.ceil(mineCount / mineTime)} c/s`,
+        `花费总时间为 ${mineTime}s, 平均算力： ${Math.ceil(mineCount / mineTime)} c/s`,
         '#999'
       );
       if (!running.value) {
-        logger('Script stopped!', 'red');
+        logger('停止脚本成功!', 'red');
         return;
       }
       // console.log("🚀 ~ transaction:", transaction)
       const realTransaction = await miner.sendTransaction(transaction);
       // console.log("🚀 ~ realTransaction:", realTransaction)
-      logger(`mining hash: ${realTransaction.hash}`, '#999');
+      logger(`采矿 hash: ${realTransaction.hash}`);
       await realTransaction.wait();
       if (!running.value) {
-        logger('Script stopped!', 'red');
+        logger('停止脚本成功!', 'red');
         return;
       }
-      return logger('mining success');
+      return logger('采矿成功！');
     }
   }
 };
-run();
+
 const back = () => {
   router.back();
 };
 const runOrStop = () => {
   running.value = !running.value;
   if (running.value) {
+    lines.value = [];
     run();
-  } else {
   }
 };
+onMounted(run);
 </script>
 
 <template>
@@ -179,18 +182,18 @@ const runOrStop = () => {
     </div>
     <div class="header">
       <div>
-        <div>IERC200 挖矿工具</div>
+        <div>IERC20 采矿工具</div>
       </div>
     </div>
     <div class="form">
       <div class="row shadow">
         <div class="loading-block">
           <img src="../../assets/icon_loading.svg" alt="" :class="{ loading: running }" />
-          <span class="label">挖矿中...</span>
+          <span class="label">采矿中...</span>
         </div>
         <img :src="running ? icon_stop : icon_play" alt="" class="stop" @click="runOrStop" />
       </div>
-      <div class="command">
+      <div ref="block" class="command">
         <div
           v-for="(item, i) in lines"
           :key="i"
@@ -228,7 +231,7 @@ const runOrStop = () => {
   animation: linear 1s infinite rotate;
 }
 .header {
-  padding-top: 75px;
+  padding-top: 30px;
   display: flex;
   font-size: 32px;
   flex-direction: column;
@@ -238,7 +241,7 @@ const runOrStop = () => {
 }
 .form {
   margin-top: 64px;
-  width: 520px;
+  width: 560px;
   border-radius: 8px;
   overflow: hidden;
   .loading-block {
@@ -268,6 +271,7 @@ const runOrStop = () => {
     padding: 20px;
     background: #ececec;
     .line {
+      word-break: break-all;
       font-size: 16px;
     }
   }
