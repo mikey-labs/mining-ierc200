@@ -6,7 +6,6 @@ import icon_stop from '../../assets/icon-stop.svg';
 import { useRoute, useRouter } from 'vue-router';
 import { ethers } from 'ethers';
 import { GAS_PREMIUM, ZERO_ADDRESS } from '../Main/constant';
-import dayjs from 'dayjs';
 import { stringToHex } from './hex';
 import { bnUtils } from './bn';
 const block = ref(null);
@@ -82,14 +81,13 @@ const run = async () => {
 
   logger(`设置的采矿数量：${amt},当前采矿难度为： ${workc}`);
   logger(`预计需要1-2分钟进行计算...`);
-  logger('开始采矿...', 'blue');
+  logger('正在采矿中...', 'blue');
   await sleep(1000);
   if (!running.value) {
     logger('停止脚本成功!', 'red');
     return;
   }
-  let timer = Date.now(),
-    startTimer = timer,
+  let startTimer = Date.now(),
     mineCount = 0;
 
   while (running.value) {
@@ -122,20 +120,6 @@ const run = async () => {
       ethers.utils.serializeTransaction(transaction, recreatedSignature)
     );
 
-    const now = Date.now();
-    if (now - timer > 100) {
-      await sleep(1);
-      if (!running.value) {
-        logger('停止脚本成功!', 'red');
-        return;
-      }
-      logger(
-        `[${dayjs(now).format('YYYY-MM-DD HH:mm:ss')}] ${mineCount} - ${predictedTransactionHash}`,
-        'red'
-      );
-      timer = now;
-    }
-
     if (predictedTransactionHash.includes(workc)) {
       unique = 0;
       logger(`${mineCount} - ${predictedTransactionHash}`, 'green');
@@ -157,7 +141,8 @@ const run = async () => {
         logger('停止脚本成功!', 'red');
         return;
       }
-      return logger('采矿成功！');
+      logger('采矿成功！');
+      return run();
     }
   }
 };
@@ -191,7 +176,13 @@ onMounted(run);
           <img src="../../assets/icon_loading.svg" alt="" :class="{ loading: running }" />
           <span class="label">采矿中...</span>
         </div>
-        <img :src="running ? icon_stop : icon_play" alt="" class="stop" @click="runOrStop" />
+        <div class="opera">
+          <div class="opera clear" @click="lines = []">
+            <img src="../../assets/icon-clear.svg" alt=""/>
+            清除
+          </div>
+          <img :src="running ? icon_stop : icon_play" alt="" class="stop" @click="runOrStop" />
+        </div>
       </div>
       <div ref="block" class="command">
         <div
@@ -210,6 +201,16 @@ onMounted(run);
 </template>
 
 <style scoped lang="less">
+.opera{
+  display: flex;
+  align-items: center;
+  color: white;
+  font-size: 14px;
+  &.clear{
+    padding-right: 16px;
+    cursor: pointer;
+  }
+}
 .shadow {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
 }

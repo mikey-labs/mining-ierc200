@@ -10,8 +10,8 @@ export default defineConfig({
     plugins: [externalizeDepsPlugin()]
   },
   renderer: {
-    server:{
-      host:true
+    server: {
+      host: true
     },
     resolve: {
       alias: {
