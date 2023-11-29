@@ -87,7 +87,8 @@ const run = async () => {
     logger('停止脚本成功!', 'red');
     return;
   }
-  let startTimer = Date.now(),
+  let timer = Date.now(),
+    startTimer = timer,
     mineCount = 0;
 
   while (running.value) {
@@ -119,7 +120,11 @@ const run = async () => {
     const predictedTransactionHash = ethers.utils.keccak256(
       ethers.utils.serializeTransaction(transaction, recreatedSignature)
     );
-
+    const now = Date.now();
+    if (now - timer > 100) {
+      await sleep(1);
+      timer = now;
+    }
     if (predictedTransactionHash.includes(workc)) {
       unique = 0;
       logger(`${mineCount} - ${predictedTransactionHash}`, 'green');
