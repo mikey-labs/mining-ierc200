@@ -1,8 +1,8 @@
 <script setup>
 import { ref, onMounted } from 'vue';
-import icon_back from '../../assets/icon-back.svg';
-import icon_play from '../../assets/icon-play.svg';
-import icon_stop from '../../assets/icon-stop.svg';
+import icon_back from '../../../assets/icon-back.svg';
+import icon_play from '../../../assets/icon-play.svg';
+import icon_stop from '../../../assets/icon-stop.svg';
 import { useRoute, useRouter } from 'vue-router';
 import { ethers } from 'ethers';
 import { GAS_PREMIUM, ZERO_ADDRESS } from '../Main/constant';
@@ -172,18 +172,18 @@ onMounted(run);
     </div>
     <div class="header">
       <div>
-        <div>IERC20 采矿工具</div>
+        <div>IERC20 采矿</div>
       </div>
     </div>
     <div class="form">
       <div class="row shadow">
         <div class="loading-block">
-          <img src="../../assets/icon_loading.svg" alt="" :class="{ loading: running }" />
+          <img src="../../../assets/icon_loading.svg" alt="" :class="{ loading: running }" />
           <span class="label">采矿中...</span>
         </div>
         <div class="opera">
           <div class="opera clear" @click="lines = []">
-            <img src="../../assets/icon-clear.svg" alt=""/>
+            <img src="../../../assets/icon-clear.svg" alt="" />
             清除
           </div>
           <img :src="running ? icon_stop : icon_play" alt="" class="stop" @click="runOrStop" />
@@ -206,12 +206,15 @@ onMounted(run);
 </template>
 
 <style scoped lang="less">
-.opera{
+main{
+  width: 560px;
+}
+.opera {
   display: flex;
   align-items: center;
   color: white;
   font-size: 14px;
-  &.clear{
+  &.clear {
     padding-right: 16px;
     cursor: pointer;
   }

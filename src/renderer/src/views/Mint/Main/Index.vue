@@ -1,11 +1,12 @@
 <script setup>
 import { computed, ref } from 'vue';
-import icon_check from '../../assets/check.svg';
-import icon_uncheck from '../../assets/uncheck.svg';
-import icon_mining from '../../assets/icon_mining.svg';
+import icon_check from '../../../assets/check.svg';
+import icon_uncheck from '../../../assets/uncheck.svg';
+import icon_mining from '../../../assets/icon_mining.svg';
 import { useRouter } from 'vue-router';
 import { ethers } from 'ethers';
 import { PROVIDER_RPC_MAIN } from './constant';
+import icon_back from '../../../assets/icon-back.svg';
 
 const router = useRouter();
 const checkValue = ref('ierc-m5');
@@ -26,7 +27,7 @@ const selectValue = ref(PROVIDER_RPC_MAIN[0]);
 const key = localStorage.getItem('privateKey') || '';
 
 const inputValue = ref(key);
-const amtValue = ref(1);
+const amtValue = ref(1000);
 const canSubmit = computed(() => !!inputValue.value && Number(amtValue.value) > 0);
 const submit = () => {
   if (canSubmit.value) {
@@ -34,7 +35,7 @@ const submit = () => {
       const wallet = new ethers.Wallet(inputValue.value);
       localStorage.setItem('privateKey', inputValue.value);
       router.push({
-        path: '/runner',
+        path: '/mint/runner',
         query: {
           amt: amtValue.value,
           privateKey: inputValue.value,
@@ -52,13 +53,19 @@ const selectorChange = (item) => {
   selectValue.value = item;
   showDropDownList.value = !showDropDownList.value;
 };
+const back = () => {
+  router.back();
+};
 </script>
 
 <template>
   <main>
+    <div class="back" @click="back">
+      <img :src="icon_back" alt="" />
+    </div>
     <div class="header">
       <div>
-        <div>IERC20 采矿工具</div>
+        <div>IERC20 采矿</div>
       </div>
     </div>
     <div class="form">
@@ -67,7 +74,7 @@ const selectorChange = (item) => {
         <div class="selector-wrapper">
           <div class="selector" @click="showDropDownList = !showDropDownList">
             {{ selectValue.label }}
-            <img src="../../assets/arrow.svg" alt="" />
+            <img src="../../../assets/arrow.svg" alt="" />
           </div>
           <transition duration="500" name="slideIn">
             <div v-show="showDropDownList" class="list">
@@ -110,6 +117,15 @@ const selectorChange = (item) => {
 </template>
 
 <style scoped lang="less">
+main{
+  width: 450px;
+}
+.back {
+  position: absolute;
+  left: 40px;
+  top: 40px;
+  cursor: pointer;
+}
 .flex {
   display: flex;
   align-items: center;
@@ -233,7 +249,7 @@ const selectorChange = (item) => {
     color: #ccc;
     align-items: center;
     cursor: pointer;
-    margin-right: 93px;
+    margin-right: 80px;
   }
   .input {
     padding: 0 20px;
