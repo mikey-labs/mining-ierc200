@@ -5,7 +5,7 @@ import icon_back from '../../../assets/icon-back.svg';
 import axios from 'axios';
 import { utils, BigNumber } from 'ethers';
 const router = useRouter();
-
+const audio = new Audio('/329.wav');
 const checkBoxData = [
   {
     label: 'ierc-m4',
@@ -14,6 +14,10 @@ const checkBoxData = [
   {
     label: 'ierc-m5',
     value: 'ierc-m5'
+  },
+  {
+    label: 'ethi',
+    value: 'ethi'
   }
 ];
 const fetch = axios.create({
@@ -40,6 +44,7 @@ const tableData = ref([]);
 const selectorChange = (item) => {
   selectValue.value = item;
   showDropDownList.value = !showDropDownList.value;
+  tableData.value = [];
   refresh();
 };
 const back = () => {
@@ -100,12 +105,17 @@ const formatNumber = (value, dem) => {
   return Number(Number(value).toFixed(dem));
 };
 const checkHighline = (unitPrice) => {
+  if (!listInfo.value.floor_price) return false;
   const wei = BigNumber.from(Number.parseInt(+listInfo.value.floor_price));
-  console.log(unitPrice,utils.formatEther(wei), unitPrice / utils.formatEther(wei));
-  return  unitPrice / utils.formatEther(wei) <= 0.3;
+  // console.log(unitPrice,utils.formatEther(wei), unitPrice / utils.formatEther(wei));
+  const isOk = unitPrice / utils.formatEther(wei) <= 0.4;
+  if (isOk) {
+    audio.play();
+  }
+  return isOk;
 };
 const gotoMarket = (item) => {
-  window.open('https://www.ierc20.com/market/ierc-m4', '_blank');
+  window.open('https://www.ierc20.com/market/' + selectValue.value.value, '_blank');
 };
 onUnmounted(() => {
   clearTimeout(timer);
@@ -175,15 +185,15 @@ onUnmounted(() => {
           >
             <td>{{ item.tick }}</td>
             <td>{{ item.amt }}</td>
-            <td style="color: #8f78f7;">${{ formatPrice(item.value / item.amt) }}</td>
+            <td style="color: #8f78f7">${{ formatPrice(item.value / item.amt) }}</td>
             <td>{{ formatAddress(item.creator) }}</td>
             <td>
               <div style="color: #ae6605">
-                <span style="color: #999;font-size: 12px;">ETH:</span>
+                <span style="color: #999; font-size: 12px">ETH:</span>
                 {{ formatNumber(item.value, 6) }}
               </div>
-              <div style="color: #8f78f7; ">
-                <span style="color: #999;font-size: 12px;">USD:</span>
+              <div style="color: #8f78f7">
+                <span style="color: #999; font-size: 12px">USD:</span>
                 {{ formatPrice(item.value) }}
               </div>
             </td>
@@ -211,16 +221,16 @@ onUnmounted(() => {
   }
 }
 @keyframes flashing {
-  from{
+  from {
     background: red;
   }
-  to{
+  to {
     background: #303030;
   }
 }
 .table-wrapper {
   margin-top: 24px;
-  height: 460px;
+  height: 480px;
   overflow: auto;
 }
 .table {
@@ -243,7 +253,7 @@ onUnmounted(() => {
   }
   .highline td {
     background: red;
-    animation: flashing .2s infinite;
+    animation: flashing 0.2s infinite;
   }
   tbody {
     tr td {
