@@ -40,6 +40,7 @@ const tableData = ref([]);
 const selectorChange = (item) => {
   selectValue.value = item;
   showDropDownList.value = !showDropDownList.value;
+  refresh();
 };
 const back = () => {
   router.back();
