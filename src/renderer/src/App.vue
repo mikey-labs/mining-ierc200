@@ -1,10 +1,7 @@
-<script setup>
-import Versions from './components/Versions.vue'
-</script>
+<script setup></script>
 
 <template>
-  <RouterView>
-  </RouterView>
+  <RouterView> </RouterView>
 </template>
 
 <style lang="less">

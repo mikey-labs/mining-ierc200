@@ -1,13 +1,14 @@
 <script setup>
-import { ref, onMounted } from 'vue';
-import icon_back from '../../../assets/icon-back.svg';
+import { onMounted, ref } from 'vue';
 import icon_play from '../../../assets/icon-play.svg';
 import icon_stop from '../../../assets/icon-stop.svg';
-import { useRoute, useRouter } from 'vue-router';
+import { useRoute } from 'vue-router';
 import { ethers } from 'ethers';
 import { GAS_PREMIUM, ZERO_ADDRESS } from '../Main/constant';
 import { stringToHex } from './hex';
 import { bnUtils } from './bn';
+import Header from '../../../components/Header.vue';
+
 const block = ref(null);
 const sleep = async (time) => {
   return new Promise((resolve) => {
@@ -28,7 +29,6 @@ function generateNonce() {
   return `${currentTimestamp}${lastNonce++}`;
 }
 
-const router = useRouter();
 const route = useRoute();
 const tokens = {
   'ierc-m4': {
@@ -152,9 +152,6 @@ const run = async () => {
   }
 };
 
-const back = () => {
-  router.back();
-};
 const runOrStop = () => {
   running.value = !running.value;
   if (running.value) {
@@ -167,14 +164,7 @@ onMounted(run);
 
 <template>
   <main>
-    <div class="back" @click="back">
-      <img :src="icon_back" alt="" />
-    </div>
-    <div class="header">
-      <div>
-        <div>IERC20 采矿</div>
-      </div>
-    </div>
+    <Header title="IERC20 采矿" />
     <div class="form">
       <div class="row shadow">
         <div class="loading-block">
@@ -206,7 +196,7 @@ onMounted(run);
 </template>
 
 <style scoped lang="less">
-main{
+main {
   width: 560px;
 }
 .opera {
@@ -219,15 +209,7 @@ main{
     cursor: pointer;
   }
 }
-.shadow {
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-}
-.back {
-  position: absolute;
-  left: 40px;
-  top: 40px;
-  cursor: pointer;
-}
+
 @keyframes rotate {
   from {
     transform: rotate(0deg);
@@ -239,15 +221,7 @@ main{
 .loading {
   animation: linear 1s infinite rotate;
 }
-.header {
-  padding-top: 30px;
-  display: flex;
-  font-size: 32px;
-  flex-direction: column;
-  font-weight: 500;
-  color: white;
-  align-items: center;
-}
+
 .form {
   margin-top: 64px;
   width: 560px;

@@ -2,6 +2,7 @@
 import { useRouter } from 'vue-router';
 import mint_icon from '../../assets/moudle/mint-icon.svg';
 import market_icon from '../../assets/moudle/market-icon.svg';
+import Header from '../../components/Header.vue';
 const router = useRouter();
 const modules = [
   {
@@ -13,7 +14,7 @@ const modules = [
     icon: market_icon,
     name: '铭文市场',
     url: '/pow/main'
-  },
+  }
 ];
 const gotoModule = (item) => {
   router.push(item.url);
@@ -22,12 +23,7 @@ const gotoModule = (item) => {
 
 <template>
   <main>
-    <div class="header">
-      <div>
-        <div>WEB3.0 工具集</div>
-        <div class="tip">开启你的数字之旅</div>
-      </div>
-    </div>
+    <Header :show-back="false" title="WEB3.0 工具集" sub-title="开启你的数字之旅" />
     <div class="module-list">
       <div v-for="(item, i) in modules" :key="i" class="module" @click="gotoModule(item)">
         <img :src="item.icon" class="icon" />
@@ -39,44 +35,6 @@ const gotoModule = (item) => {
 </template>
 
 <style scoped lang="less">
-.flex {
-  display: flex;
-  align-items: center;
-}
-
-.header {
-  z-index: 1;
-  position: relative;
-  padding-top: 30px;
-  display: flex;
-  font-size: 32px;
-  flex-direction: column;
-  font-weight: 500;
-  color: white;
-  align-items: center;
-  .tip {
-    position: relative;
-    display: flex;
-    align-items: center;
-    font-weight: 300;
-    color: #ccc;
-    font-size: 16px;
-    margin-top: 4px;
-    &:before,
-    &:after {
-      content: '';
-      height: 1px;
-      background: #ccc;
-      width: 40px;
-    }
-    &:before{
-      margin-right: 12px;
-    }
-    &:after{
-      margin-left: 12px;
-    }
-  }
-}
 .module-list {
   padding: 0 90px;
   position: relative;

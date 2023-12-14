@@ -6,7 +6,8 @@ import icon_mining from '../../../assets/icon_mining.svg';
 import { useRouter } from 'vue-router';
 import { ethers } from 'ethers';
 import { PROVIDER_RPC_MAIN } from './constant';
-import icon_back from '../../../assets/icon-back.svg';
+import Selector from '../../../components/Selector.vue';
+import Header from '../../../components/Header.vue';
 
 const router = useRouter();
 const checkValue = ref('ierc-m5');
@@ -22,7 +23,6 @@ const checkBoxData = [
   }
 ];
 const loading = ref(false);
-const showDropDownList = ref(false);
 const selectValue = ref(PROVIDER_RPC_MAIN[0]);
 const key = localStorage.getItem('privateKey') || '';
 
@@ -51,46 +51,24 @@ const submit = () => {
 };
 const selectorChange = (item) => {
   selectValue.value = item;
-  showDropDownList.value = !showDropDownList.value;
-};
-const back = () => {
-  router.back();
 };
 </script>
 
 <template>
   <main>
-    <div class="back" @click="back">
-      <img :src="icon_back" alt="" />
-    </div>
-    <div class="header">
-      <div>
-        <div>IERC20 采矿</div>
-      </div>
-    </div>
+    <Header title="IERC20 采矿" />
     <div class="form">
       <div class="label">配置数据</div>
       <div class="row shadow col">
-        <div class="selector-wrapper">
-          <div class="selector" @click="showDropDownList = !showDropDownList">
-            {{ selectValue.label }}
-            <img src="../../../assets/arrow.svg" alt="" />
-          </div>
-          <transition duration="500" name="slideIn">
-            <div v-show="showDropDownList" class="list">
-              <div
-                v-for="(item, i) in PROVIDER_RPC_MAIN"
-                :key="i"
-                class="item"
-                @click="selectorChange(item)"
-              >
-                <div>
-                  {{ item.label }}
-                </div>
-                <div class="tip">{{ item.value }}</div>
-              </div>
-            </div>
-          </transition>
+        <div class="selector-block">
+          <Selector
+            :width="266"
+            :wrapper-height="220"
+            :data="PROVIDER_RPC_MAIN"
+            :content-height="220"
+            :show-value="true"
+            @click="selectorChange"
+          />
         </div>
         <div class="amt-wrapper">
           <input v-model="amtValue" class="amt-input" placeholder="配置采矿数量" />
@@ -117,19 +95,10 @@ const back = () => {
 </template>
 
 <style scoped lang="less">
-main{
+main {
   width: 450px;
 }
-.back {
-  position: absolute;
-  left: 40px;
-  top: 40px;
-  cursor: pointer;
-}
-.flex {
-  display: flex;
-  align-items: center;
-}
+
 .amt-wrapper {
   margin-top: 16px;
   padding-bottom: 16px;
@@ -146,53 +115,12 @@ main{
     border: none;
   }
 }
-.selector-wrapper {
+.selector-block {
   position: relative;
   border-bottom: 1px solid #404040;
   padding: 0 0 16px 0;
   margin: 0 16px;
   width: 100%;
-  .selector {
-    cursor: pointer;
-    width: 266px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 6px 16px;
-    background: #404040;
-    border-radius: 40px;
-    color: #ccc;
-    font-size: 16px;
-    &:hover {
-      background: #454545;
-    }
-  }
-  .list {
-    position: absolute;
-    top: 40px;
-    left: 0;
-    width: 266px;
-    background: #404040;
-    border-radius: 8px;
-    max-height: 220px;
-    overflow: auto;
-    .item {
-      &:hover {
-        background: #454545;
-      }
-      cursor: pointer;
-      font-size: 16px;
-      color: #999;
-      padding: 16px;
-      border-bottom: 1px solid #555;
-      .tip {
-        word-break: break-all;
-        font-size: 12px;
-        color: #888;
-        margin-top: 4px;
-      }
-    }
-  }
 }
 .shadow {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
@@ -214,15 +142,7 @@ main{
 .loading {
   animation: linear 1s infinite rotate;
 }
-.header {
-  padding-top: 30px;
-  display: flex;
-  font-size: 32px;
-  flex-direction: column;
-  font-weight: 500;
-  color: white;
-  align-items: center;
-}
+
 .form {
   display: flex;
   flex-direction: column;
@@ -286,20 +206,5 @@ main{
       cursor: default;
     }
   }
-}
-.slideIn-enter-from,
-.slideIn-leave-to {
-  height: 0;
-}
-// 元素进入结束的状态 ｜ 元素开始离开的状态。 这里不写也可以！！！！！！
-.slideIn-enter-to,
-.slideIn-leave-from {
-  height: 220px;
-}
-// 元素进入 ｜ 结束时，过渡的效果
-.slideIn-enter-active,
-.slideIn-leave-active {
-  // 过渡动画的使用
-  transition: height 0.5s;
 }
 </style>
