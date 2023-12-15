@@ -8,6 +8,8 @@ import { ethers } from 'ethers';
 import { PROVIDER_RPC_MAIN } from './constant';
 import Selector from '../../../components/Selector.vue';
 import Header from '../../../components/Header.vue';
+import Input from '../../../components/Input.vue';
+import Button from '../../../components/Button.vue';
 
 const router = useRouter();
 const checkValue = ref('ierc-m5');
@@ -62,10 +64,10 @@ const selectorChange = (item) => {
       <div class="row shadow col">
         <div class="selector-block">
           <Selector
-            :width="266"
-            :wrapper-height="220"
+            width="266px"
+            wrapper-height="220px"
             :data="PROVIDER_RPC_MAIN"
-            :content-height="220"
+            content-height="220px"
             :show-value="true"
             @click="selectorChange"
           />
@@ -85,11 +87,16 @@ const selectorChange = (item) => {
           </div>
         </div>
       </div>
-      <input v-model="inputValue" class="row input shadow" placeholder="填写钱包私钥" />
-      <button class="submit shadow" :class="{ disable: loading || !canSubmit }" @click="submit">
+      <Input v-model="inputValue" width="390px" class="row shadow" placeholder="填写钱包私钥" />
+      <Button
+        style="margin-top: 10px"
+        class="shadow"
+        :disable="loading || !canSubmit"
+        @click="submit"
+      >
         <img :src="icon_mining" :class="{ loading }" alt="" />
         <span>开始采矿</span>
-      </button>
+      </Button>
     </div>
   </main>
 </template>
@@ -122,15 +129,7 @@ main {
   margin: 0 16px;
   width: 100%;
 }
-.shadow {
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-}
-.back {
-  position: absolute;
-  left: 40px;
-  top: 40px;
-  cursor: pointer;
-}
+
 @keyframes rotate {
   from {
     transform: rotate(0deg);
@@ -170,41 +169,6 @@ main {
     align-items: center;
     cursor: pointer;
     margin-right: 80px;
-  }
-  .input {
-    padding: 0 20px;
-    outline: none;
-    border: none;
-    font-size: 18px;
-    background: #303030;
-    color: white;
-    height: 60px;
-    border-radius: 8px;
-    width: 390px;
-  }
-  .submit {
-    &:hover {
-      background: #2064af;
-    }
-    transition: all 0.5s;
-    cursor: pointer;
-    height: 60px;
-    border-radius: 8px;
-    border: none;
-    color: white;
-    margin-top: 10px;
-    -webkit-appearance: none;
-    background: #2a82e4;
-    font-size: 18px;
-    font-weight: 500;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    &.disable,
-    &.disable:hover {
-      background: #808080;
-      cursor: default;
-    }
   }
 }
 </style>

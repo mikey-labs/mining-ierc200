@@ -3,6 +3,7 @@ export const PROVIDER_RPC_MAIN = [
     label: 'llamarpc 正式网络',
     value: 'https://eth.llamarpc.com'
   },
+
   {
     label: 'linea 正式网络',
     value: 'https://linea.blockpi.network/v1/rpc/public'
@@ -19,3 +20,9 @@ export const PROVIDER_RPC_MAIN = [
 export const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000';
 
 export const GAS_PREMIUM = 110;
+export const ETHEREUM_RPC_MAIN = [
+  {
+    label: 'Ethereum 主网络',
+    value: 'https://ethereum.blockpi.network/v1/rpc/public'
+  }
+];

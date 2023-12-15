@@ -1,32 +1,37 @@
 <script setup>
-
-const props = defineProps({
+defineProps({
   modelValue: {
     type: Boolean,
     default: true
   },
-  title:{
-    type:String,
-    default:"ddd"
+  title: {
+    type: String,
+    default: ''
   }
 });
-const emits = defineEmits(['modelValue:update']);
+const emits = defineEmits(['update:modelValue']);
 </script>
 
 <template>
-  <transition name="popIn" duration="500">
-    <div v-if="modelValue" class="popover">
-      <div class="popover-body">
-        <div class="head">
-          {{title}}
-          <img class="close" src="../assets/icon-close.svg" />
+  <Teleport to="body">
+    <div v-show="modelValue" class="popover">
+      <transition name="popIn" duration="500" appear-class="popover-body">
+        <div v-if="modelValue" class="popover-body">
+          <div class="head">
+            {{ title }}
+            <img
+              class="close"
+              src="../assets/icon-close.svg"
+              @click="emits('update:modelValue', false)"
+            />
+          </div>
+          <div class="body">
+            <slot />
+          </div>
         </div>
-        <div class="body">
-          <slot />
-        </div>
-      </div>
+      </transition>
     </div>
-  </transition>
+  </Teleport>
 </template>
 
 <style scoped lang="less">
@@ -42,27 +47,32 @@ const emits = defineEmits(['modelValue:update']);
   align-items: center;
   justify-content: center;
   z-index: 1000;
-  .head{
+  .head {
     position: relative;
-    padding: 12px 16px;
+    padding: 16px;
     color: #ccc;
-    font-size: 16px;
+    font-size: 18px;
     text-align: center;
     border-bottom: 1px solid #232323;
-    .close{
+    .close {
       position: absolute;
       z-index: 1;
       right: 16px;
       top: 12px;
+      cursor: pointer;
+      transition: opacity 0.5s;
+      &:hover {
+        opacity: 0.5;
+      }
     }
   }
   .popover-body {
     width: 480px;
-    height: 350px;
+    min-height: 350px;
     background: #1a1a1a;
     border-radius: 8px;
     border: 1px #232323 solid;
-    .body{
+    .body {
       padding: 16px;
     }
   }

@@ -62,7 +62,7 @@ const getTXData = () => {
 };
 const getEthereumUnitPrice = () => {
   return getEthereumToUSD().then((data) => {
-    unitPrice.value = data.ethereum.usd;
+    unitPrice.value = +data.data;
   });
 };
 const getCurrentListInfo = () => {
@@ -81,7 +81,7 @@ const refresh = async () => {
   await getTXData();
   timer = setTimeout(() => {
     refresh();
-  }, 10000);
+  }, 15000);
   loading.value = false;
 };
 
@@ -114,7 +114,7 @@ onUnmounted(() => {
         <div>地板价：${{ floorPrice }}</div>
       </div>
       <div style="width: 140px">
-        <Selector :width="140" :data="checkBoxData" @change="selectorChange" />
+        <Selector width="140px" :data="checkBoxData" @change="selectorChange" />
       </div>
     </div>
     <div class="table-wrapper">
@@ -135,7 +135,7 @@ onUnmounted(() => {
 .list-info {
   flex: 1;
   justify-content: center;
-  color: white;
+  color: #8f78f7;
 }
 .refresh {
   cursor: pointer;

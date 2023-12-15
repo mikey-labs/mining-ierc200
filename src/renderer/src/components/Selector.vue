@@ -10,16 +10,24 @@ const props = defineProps({
     default: false
   },
   wrapperHeight: {
-    type: Number,
-    default: 156
+    type: String,
+    default: '156px'
   },
   width: {
-    type: Number,
-    default: 140
+    type: String,
+    default: '140px'
+  },
+  height: {
+    type: String,
+    default: '36px'
   },
   contentHeight: {
-    type: Number,
-    default: 156
+    type: String,
+    default: '156px'
+  },
+  radius: {
+    type: String,
+    default: '40px'
   }
 });
 const emit = defineEmits(['change']);
@@ -36,12 +44,15 @@ const selectorChange = (item) => {
   <div
     class="selector-wrapper"
     :style="{
-      '--content-height': props.contentHeight + 'px'
+      '--content-height': props.contentHeight,
+      '--holder-height': height
     }"
   >
     <div
       :style="{
-        width: width + 'px'
+        width: width,
+        borderRadius: radius,
+        height: height
       }"
       class="selector"
       @click="showDropDownList = !showDropDownList"
@@ -54,8 +65,8 @@ const selectorChange = (item) => {
         v-show="showDropDownList"
         class="list"
         :style="{
-          width: width + 'px',
-          maxHeight: wrapperHeight + 'px'
+          width: width,
+          maxHeight: wrapperHeight
         }"
       >
         <div v-for="(item, i) in data" :key="i" class="item" @click="selectorChange(item)">
@@ -77,9 +88,8 @@ const selectorChange = (item) => {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 6px 16px;
+    padding: 0 16px;
     background: #404040;
-    border-radius: 40px;
     color: #ccc;
     font-size: 16px;
     &:hover {
@@ -88,7 +98,7 @@ const selectorChange = (item) => {
   }
   .list {
     position: absolute;
-    top: 40px;
+    top: calc(var(--holder-height) + 4px);
     left: 0;
     background: #404040;
     border-radius: 8px;
@@ -102,6 +112,7 @@ const selectorChange = (item) => {
       font-size: 16px;
       color: #999;
       padding: 16px;
+      background: #404040;
       border-bottom: 1px solid #555;
       .tip {
         word-break: break-all;

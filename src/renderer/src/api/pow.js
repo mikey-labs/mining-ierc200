@@ -8,7 +8,7 @@ export const getIERC20OrderList = (param) => {
   return fetch.post('order/list', param);
 };
 export const getEthereumToUSD = () => {
-  return fetch.get('https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd');
+  return fetch.get('price/eth');
 };
 
 export const getStatisticsByTick = (param) => {

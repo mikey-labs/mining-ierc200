@@ -1,7 +1,12 @@
 <script setup>
 import { BigNumber, utils } from 'ethers';
 import { checkIsBuyPending } from '../../../../api/pow';
-import { formatNumber } from '../../../../util';
+import { formatAddress, formatNumber } from '../../../../util';
+import { useStore } from 'vuex';
+import Popover from '../../../../components/Popover.vue';
+const store = useStore();
+import { ref, computed } from 'vue';
+import Button from '../../../../components/Button.vue';
 const props = defineProps({
   data: {
     type: Array,
@@ -18,11 +23,8 @@ const props = defineProps({
 });
 const audio = new Audio('/329.wav');
 
-const formatAddress = (str) => {
-  return str.substring(0, 6) + '...' + str.substring(str.length - 4, str.length);
-};
-const formatPrice = (value) => {
-  return formatNumber(value * props.unitPrice, 6);
+const formatPrice = (value, dem = 6) => {
+  return formatNumber(value * props.unitPrice, dem);
 };
 const checkHighLine = (unitPrice) => {
   const wei = BigNumber.from(props.floorPrice);
@@ -33,16 +35,50 @@ const checkHighLine = (unitPrice) => {
   }
   return isOk;
 };
-const gotoMarket = (item) => {
+const currentOrder = ref({});
+const showPopover = ref(false);
+const canBuy = ref(true);
+const currentGas = ref('0');
+const balance = ref('0');
+const loading = ref(false);
+const totalPay = computed(() => {
+  return currentOrder.value.value * 1.02;
+});
+const gotoMarket = async (item) => {
+  currentOrder.value = item;
+  const { wallet } = store.getters;
+  if (!wallet) {
+    alert('请先登录');
+    return;
+  }
+  showPopover.value = true;
+  const rest = await wallet.getBalance();
+  const balanceWei = BigNumber.from(rest);
+  balance.value = utils.formatEther(balanceWei);
+
   const { sign, tick } = item;
+
   checkIsBuyPending({
     signature: sign,
     tick
-  }).then((canBuy) => {
-    if (canBuy) {
+  }).then(async (can) => {
+    canBuy.value = can;
+    if (can) {
+      const gas = await wallet.provider.getGasPrice();
+      const wei = BigNumber.from(gas);
+      currentGas.value = utils.formatEther(wei);
+      console.log(currentGas.value);
     }
   });
   // window.open('https://www.ierc20.com/market/' + selectValue.value.value, '_blank');
+};
+const pay = () => {
+  if (loading.value) return;
+  if (canBuy.value && balance.value >= totalPay.value) {
+    loading.value = true;
+    console.log('pay');
+    loading.value = false;
+  }
 };
 </script>
 
@@ -81,11 +117,66 @@ const gotoMarket = (item) => {
           </div>
         </td>
         <td>
-          <div class="op" @click="gotoMarket(item)">去交易</div>
+          <div class="op" @click="gotoMarket(item)">购买</div>
         </td>
       </tr>
     </tbody>
   </table>
+  <Popover v-model="showPopover" :title="'购买' + currentOrder.tick">
+    <div class="body">
+      <div>
+        <div class="row">
+          <span class="label">总价：</span>
+          <span class="value">
+            {{ currentOrder.value }} ETH ≈ ${{ formatPrice(currentOrder.value, 4) }}
+          </span>
+        </div>
+        <div class="row">
+          <span class="label">网络gas费：</span>
+          <span class="value"
+            >{{ formatNumber(currentGas, 4) }}ETH ≈ ${{ formatPrice(currentGas, 4) }}</span
+          >
+        </div>
+        <div class="row last">
+          <span class="label">ierc20服务费：<span style="color: #555">(2%)</span></span>
+          <span class="value"
+            >{{ formatNumber(currentOrder.value * 0.02, 4) }} ETH ≈ ${{
+              formatPrice(currentOrder.value * 0.02, 4)
+            }}</span
+          >
+        </div>
+      </div>
+      <div>
+        <div class="row" style="margin-top: 16px">
+          <span class="label">您将支付：</span>
+          <span class="value total"
+            >{{ formatNumber(totalPay, 4) }} ETH ≈ ${{ formatPrice(totalPay, 4) }}</span
+          >
+        </div>
+        <div class="row">
+          <span class="label">您的余额：</span>
+          <span class="value rest"
+            >{{ formatNumber(balance, 4) }} ETH ≈ ${{ formatPrice(balance, 4) }}</span
+          >
+        </div>
+      </div>
+      <Button
+        :disable="!canBuy || balance < totalPay"
+        height="52px"
+        background="#AE6605"
+        style="margin-top: 30px"
+        @click="pay"
+      >
+        <span v-if="loading" class="flex">
+          <img class="loading" src="../../../../assets/icon_loading.svg" />
+          正在交易...
+        </span>
+        <span v-else>{{
+          !canBuy ? '已经卖出' : balance < totalPay ? '余额不足' : '确认购买'
+        }}</span>
+      </Button>
+    </div>
+  </Popover>
 </template>
 
 <style scoped lang="less">
@@ -123,5 +214,47 @@ const gotoMarket = (item) => {
       text-decoration: underline;
     }
   }
+}
+.body {
+  padding: 14px 40px 0;
+  .row {
+    display: flex;
+    justify-content: space-between;
+    align-items: end;
+    margin-bottom: 8px;
+    .label {
+      color: #999;
+      font-size: 14px;
+    }
+    .value {
+      color: #ccc;
+      font-size: 14px;
+      &.total {
+        font-size: 16px;
+        font-weight: bold;
+        color: #ae6605;
+      }
+      &.rest {
+        font-size: 16px;
+        font-weight: bold;
+        color: #2a82e4;
+      }
+    }
+    &.last {
+      border-bottom: 1px solid #444;
+      padding-bottom: 30px;
+    }
+  }
+}
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+.loading {
+  animation: linear 1s infinite rotate;
 }
 </style>
