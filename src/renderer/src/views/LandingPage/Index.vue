@@ -2,6 +2,8 @@
 import { useRouter } from 'vue-router';
 import mint_icon from '../../assets/moudle/mint-icon.svg';
 import market_icon from '../../assets/moudle/market-icon.svg';
+import tools_icon from '../../assets/moudle/tools-icon.svg';
+import ers_icon from '../../assets/moudle/ers-icon.svg';
 import Header from '../../components/Header.vue';
 const router = useRouter();
 const modules = [
@@ -14,6 +16,15 @@ const modules = [
     icon: market_icon,
     name: '铭文市场',
     url: '/pow/main'
+  },{
+    icon: ers_icon,
+    name: 'ers市场',
+    url: '/ers/main'
+  },
+  {
+    icon: tools_icon,
+    name: '常用工具',
+    url: '/tools/main'
   }
 ];
 const gotoModule = (item) => {

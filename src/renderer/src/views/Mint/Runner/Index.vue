@@ -4,7 +4,7 @@ import icon_play from '../../../assets/icon-play.svg';
 import icon_stop from '../../../assets/icon-stop.svg';
 import { useRoute } from 'vue-router';
 import { ethers } from 'ethers';
-import { GAS_PREMIUM, ZERO_ADDRESS } from '../Main/constant';
+import { GAS_PREMIUM, ZERO_ADDRESS } from '../../../config/constant';
 import { stringToHex } from './hex';
 import { bnUtils } from './bn';
 import Header from '../../../components/Header.vue';
@@ -165,7 +165,7 @@ onMounted(run);
 <template>
   <main>
     <Header title="IERC20 采矿" />
-    <div class="form">
+    <div class="form container">
       <div class="row shadow">
         <div class="loading-block">
           <img src="../../../assets/icon_loading.svg" alt="" :class="{ loading: running }" />
@@ -223,7 +223,6 @@ main {
 }
 
 .form {
-  margin-top: 64px;
   width: 560px;
   border-radius: 8px;
   overflow: hidden;

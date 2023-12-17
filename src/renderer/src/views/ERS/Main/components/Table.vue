@@ -152,7 +152,7 @@ const hexData = (item, gasPrice) => {
     ]
   };
   console.log('签名的交易data数据:', data);
-  return encodeTransactionData('data:application/json,' + JSON.stringify(data));
+  return encodeTransactionData(data);
 };
 </script>
 

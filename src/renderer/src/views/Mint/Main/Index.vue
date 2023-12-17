@@ -5,7 +5,7 @@ import icon_uncheck from '../../../assets/uncheck.svg';
 import icon_mining from '../../../assets/icon_mining.svg';
 import { useRouter } from 'vue-router';
 import { ethers } from 'ethers';
-import { PROVIDER_RPC_MAIN } from './constant';
+import { PROVIDER_RPC_MAIN } from '../../../config/constant';
 import Selector from '../../../components/Selector.vue';
 import Header from '../../../components/Header.vue';
 import Input from '../../../components/Input.vue';
@@ -59,7 +59,7 @@ const selectorChange = (item) => {
 <template>
   <main>
     <Header title="IERC20 采矿" />
-    <div class="form">
+    <div class="form container">
       <div class="label">配置数据</div>
       <div class="row shadow col">
         <div class="selector-block">
@@ -143,10 +143,6 @@ main {
 }
 
 .form {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  margin-top: 37px;
   .label {
     color: #ccc;
     font-size: 16px;

@@ -4,7 +4,7 @@ import icon_back from '../assets/icon-back.svg';
 import icon_wallet from '../assets/icon-wallet.svg';
 import icon_login_ok from '../assets/icon-login-ok.svg';
 import { ref, computed } from 'vue';
-import { ETHEREUM_RPC_MAIN } from '../views/Mint/Main/constant';
+import { ETHEREUM_RPC_MAIN } from '../config/constant';
 import Popover from './Popover.vue';
 import Selector from './Selector.vue';
 import Input from './Input.vue';
@@ -24,15 +24,20 @@ defineProps({
   showBack: {
     type: Boolean,
     default: true
+  },
+  showWallet: {
+    type: Boolean,
+    default: false
   }
 });
 
 const isLogin = computed(() => {
-  return !!store.getters.wallet;
+  return !!store.getters.isLogin;
 });
 const address = computed(() => {
   return isLogin.value ? store.getters.wallet.address : '';
 });
+
 const back = () => {
   router.back();
 };
@@ -72,21 +77,27 @@ const connectWallet = () => {
       <div v-if="subTitle" class="tip">{{ subTitle }}</div>
     </div>
   </div>
-  <div class="wallet" @click="showPopover()">
-    <img
-      :title="isLogin ? '点击退出登录' : '点击绑定钱包'"
-      :src="isLogin ? icon_login_ok : icon_wallet"
-      alt=""
-    />
-    <div class="address">{{ formatAddress(address, 3, 3) }}</div>
+  <div class="wallet">
+    <slot name="right">
+      <div v-if="showWallet" @click="showPopover()">
+        <img
+          class="icon"
+          :title="isLogin ? '点击退出登录' : '点击绑定钱包'"
+          :src="isLogin ? icon_login_ok : icon_wallet"
+          alt=""
+        />
+        <div class="address">{{ formatAddress(address, 3, 3) }}</div>
+      </div>
+    </slot>
   </div>
+
   <Popover v-model="popoverVisibility" title="使用密钥登录钱包">
     <div class="popover-container">
       <Selector
         height="42px"
         radius="8px"
-        wrapper-height="54px"
-        content-height="54px"
+        wrapper-height="154px"
+        content-height="154px"
         :data="ETHEREUM_RPC_MAIN"
         width="100%"
         @change="(item) => (selectNetwork = item)"
@@ -117,7 +128,7 @@ const connectWallet = () => {
 .header {
   z-index: 1;
   position: relative;
-  padding-top: 30px;
+  padding-top: 20px;
   display: flex;
   font-size: 32px;
   flex-direction: column;
@@ -151,13 +162,13 @@ const connectWallet = () => {
 .wallet {
   z-index: 999;
   position: absolute;
-  top: 40px;
+  top: 35px;
   cursor: pointer;
   transition: opacity 0.3s;
   display: flex;
   flex-direction: column;
   align-items: end;
-  &:hover {
+  .icon:hover {
     opacity: 0.5;
   }
   .address {

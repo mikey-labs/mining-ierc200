@@ -4,18 +4,20 @@ export const WT_SIGN = 'WT_SIGN';
 let wallet = null;
 export default {
   state: {
+    isLogin: false
   },
   mutations: {
-    setWallet(state, wallet) {
-      state.wallet = wallet;
+    setIsLogin(state, isLogin) {
+      state.isLogin = isLogin;
     },
-    logout() {
+    logout(state) {
       wallet = null;
+      state.isLogin = false;
       localStorage.removeItem(WT_SIGN);
     }
   },
   actions: {
-    login(ctx, { url, key }) {
+    login({ commit }, { url, key }) {
       return new Promise((resolve, reject) => {
         try {
           const provider = createRpcProvider(url);
@@ -24,6 +26,7 @@ export default {
             WT_SIGN,
             btoa(encodeURIComponent(JSON.stringify({ url, key: key })))
           );
+          commit('setIsLogin', true);
           resolve(wallet);
         } catch (e) {
           console.log(e);
@@ -33,6 +36,7 @@ export default {
     }
   },
   getters: {
-    wallet: () => wallet
+    wallet: () => wallet,
+    isLogin: (state) => state.isLogin
   }
 };

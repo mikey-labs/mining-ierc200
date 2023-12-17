@@ -8,7 +8,7 @@ const store = createStore({
 const userInfoStr = localStorage.getItem(WT_SIGN);
 if (userInfoStr) {
   const info = JSON.parse(decodeURIComponent(atob(userInfoStr)));
-
+  console.log(info)
   store.dispatch('login', info).catch(()=>{
     localStorage.removeItem(WT_SIGN);
   });
