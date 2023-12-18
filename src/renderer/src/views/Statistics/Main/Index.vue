@@ -6,7 +6,7 @@ import { utils } from 'ethers';
 import { formatNumber } from '../../../util';
 import Block from './components/Block.vue';
 const audio = new Audio('/329.wav');
-const listInfo = reactive([]);
+let listInfo = ref([]);
 
 const getIercTokenInfo = () => {
   return getStatisticsByTick({
@@ -25,7 +25,7 @@ const getIercTokenInfo = () => {
           6
         )
       };
-      listInfo.push(info);
+      listInfo.value.push(info);
       checkAudio(info);
     }
   });
@@ -52,7 +52,7 @@ const getErsTokenInfo = () => {
         6
       )
     };
-    listInfo.push(info);
+    listInfo.value.push(info);
     checkAudio(info);
   });
 };
@@ -65,8 +65,9 @@ const getEthereumUnitPrice = () => {
 let timer = 0;
 const loading = ref(false);
 const refresh = async () => {
-  loading.value = true;
   clearTimeout(timer);
+  loading.value = true;
+  listInfo.value = [];
   await getErsTokenInfo();
   await getIercTokenInfo();
   timer = setTimeout(() => {

@@ -9,22 +9,26 @@ import Header from '../../components/Header.vue';
 const router = useRouter();
 const modules = [
   {
-    icon: market_icon,
-    name: '铭文市场',
-    url: '/pow/main'
-  },{
-    icon: ers_icon,
-    name: 'ers市场',
-    url: '/ers/main'
-  },{
-    icon: mint_icon,
-    name: 'IERC20 采矿',
-    url: '/mint/main'
-  },{
     icon: statistics_icon,
     name: '市场看板',
     url: '/statistics/main'
-  },{
+  },
+  {
+    icon: market_icon,
+    name: '铭文市场',
+    url: '/pow/main'
+  },
+  {
+    icon: ers_icon,
+    name: 'ers市场',
+    url: '/ers/main'
+  },
+  {
+    icon: mint_icon,
+    name: 'IERC20 采矿',
+    url: '/mint/main'
+  },
+  {
     icon: tools_icon,
     name: '常用工具',
     url: '/tools/main'
