@@ -21,8 +21,7 @@ const tabChange = (item) => {
 <template>
   <main>
     <Header title="常用工具" />
-    <Tabs :data="data" @change="tabChange" style="margin-top: 50px" />
-
+    <Tabs :data="data" style="margin-top: 50px" @change="tabChange" />
     <div class="container">
       <HexChanger v-show="active === 1" />
     </div>
