@@ -16,5 +16,9 @@ export const getStatisticsByTick = (param) => {
 };
 
 export const checkIsBuyPending = (param) => {
-  return fetch.post('buy_pending/check', param).then(data=>data.data);
+  return fetch.post('buy_pending/check', param).then((data) => data.data);
+};
+export const getErsVolumeInfo = () => {
+  return fetch
+    .get('https://ethrunes.xyz/volumes.json?t=' + Date.now().toString());
 };

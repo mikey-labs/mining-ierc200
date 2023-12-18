@@ -3,9 +3,10 @@ import { BigNumber, ethers, utils } from 'ethers';
 import { checkIsBuyPending } from '../../../../api/pow';
 import { encodeTransactionData, formatAddress, formatNumber } from '../../../../util';
 import Popover from '../../../../components/Popover.vue';
-import { computed, watch, ref } from 'vue';
+import { computed, ref } from 'vue';
 import Button from '../../../../components/Button.vue';
 import { ETHEREUM_RPC_MAIN, IERC20_ADDRESS } from '../../../../config/constant';
+
 const props = defineProps({
   data: {
     type: Array,
@@ -66,23 +67,6 @@ const gotoMarket = async (item) => {
     }
   });
 };
-
-watch(
-  () => props.data,
-  (n) => {
-    if (n.length) {
-      const item = n[0];
-      const unitPrice = formatPrice(item.value / item.amt, 6);
-      if (
-        (item.tick === 'ierc-m4' && unitPrice < 0.1) ||
-        (item.tick === 'ethi' && unitPrice < 2.2) ||
-        (item.tick === 'ierc-m5' && unitPrice < 0.006)
-      ) {
-        audio.play();
-      }
-    }
-  }
-);
 
 const getEstimateGas = async () => {
   const gas = await provider.getGasPrice();

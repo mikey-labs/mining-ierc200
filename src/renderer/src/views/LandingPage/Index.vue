@@ -4,14 +4,10 @@ import mint_icon from '../../assets/moudle/mint-icon.svg';
 import market_icon from '../../assets/moudle/market-icon.svg';
 import tools_icon from '../../assets/moudle/tools-icon.svg';
 import ers_icon from '../../assets/moudle/ers-icon.svg';
+import statistics_icon from '../../assets/moudle/statistics-icon.svg';
 import Header from '../../components/Header.vue';
 const router = useRouter();
 const modules = [
-  {
-    icon: mint_icon,
-    name: 'IERC20 采矿',
-    url: '/mint/main'
-  },
   {
     icon: market_icon,
     name: '铭文市场',
@@ -20,8 +16,15 @@ const modules = [
     icon: ers_icon,
     name: 'ers市场',
     url: '/ers/main'
-  },
-  {
+  },{
+    icon: mint_icon,
+    name: 'IERC20 采矿',
+    url: '/mint/main'
+  },{
+    icon: statistics_icon,
+    name: '市场看板',
+    url: '/statistics/main'
+  },{
     icon: tools_icon,
     name: '常用工具',
     url: '/tools/main'
@@ -56,7 +59,8 @@ const gotoModule = (item) => {
   .module {
     cursor: pointer;
     transition: all 0.5s;
-    margin-right: 54px;
+    margin-right: 57px;
+    margin-bottom: 30px;
     &:hover {
       opacity: 0.5;
     }
