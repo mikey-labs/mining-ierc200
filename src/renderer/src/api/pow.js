@@ -20,5 +20,5 @@ export const checkIsBuyPending = (param) => {
 };
 export const getErsVolumeInfo = () => {
   return fetch
-    .get('https://ethrunes.xyz/volumes.json?t=' + Date.now().toString());
+    .get('https://www.metasoy.cn/web3/api/v1/ers/volume?t=' + Date.now().toString());
 };

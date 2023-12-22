@@ -18,11 +18,11 @@ const modules = [
     name: '铭文市场',
     url: '/pow/main'
   },
-  {
-    icon: ers_icon,
-    name: 'ers市场',
-    url: '/ers/main'
-  },
+  // {
+  //   icon: ers_icon,
+  //   name: 'ers市场',
+  //   url: '/ers/main'
+  // },
   {
     icon: mint_icon,
     name: 'IERC20 采矿',

@@ -13,6 +13,7 @@ const getIercTokenInfo = () => {
     limit: 11,
     offset: 0
   }).then(({ data }) => {
+    const res = [];
     for (const item of data.list) {
       const { tick, floor_price, volume_total } = item;
       const info = {
@@ -25,9 +26,10 @@ const getIercTokenInfo = () => {
           6
         )
       };
-      listInfo.value.push(info);
-      checkAudio(info);
+      res.push(info);
+      // checkAudio(info);
     }
+    return res;
   });
 };
 const checkAudio = (info) => {
@@ -40,36 +42,39 @@ const checkAudio = (info) => {
     audio.play();
   }
 };
-const getErsTokenInfo = () => {
-  getErsVolumeInfo().then(({ total }) => {
-    const info = {
-      url: 'https://ethrunes.xyz/orders/ers',
-      tick: 'ers',
-      volume: formatNumber(total['0xca2b148c42190d936f4329ff5e771675d8da4326'], 4),
-      totalSupply: '30,000,000',
-      floorPrice: formatNumber(
-        (total['0x07e8981efcb7b46edbb89c265632031f328d3d51'] * 10) / unitPrice.value,
-        6
-      )
-    };
-    listInfo.value.push(info);
-    checkAudio(info);
-  });
-};
+// const getErsTokenInfo = () => {
+//   return getErsVolumeInfo().then(({ total }) => {
+//     const info = {
+//       url: 'https://ethrunes.xyz/orders/ers',
+//       tick: 'ers',
+//       volume: formatNumber(total['0xca2b148c42190d936f4329ff5e771675d8da4326'], 4),
+//       totalSupply: '30,000,000',
+//       floorPrice: formatNumber(
+//         (total['0x07e8981efcb7b46edbb89c265632031f328d3d51'] * 10) / unitPrice.value,
+//         6
+//       )
+//     };
+//     return info;
+//     // checkAudio(info);
+//   });
+// };
 const unitPrice = ref('0');
 const getEthereumUnitPrice = () => {
   return getEthereumToUSD().then((data) => {
     unitPrice.value = +data.data;
   });
 };
+const getTokensInfo = async () => {
+  // const [info1, listInfo2] = await Promise.all([getErsTokenInfo(), getIercTokenInfo()]);
+  // listInfo.value = [info1, ...listInfo2];
+  listInfo.value = await getIercTokenInfo();
+};
 let timer = 0;
 const loading = ref(false);
 const refresh = async () => {
   clearTimeout(timer);
   loading.value = true;
-  listInfo.value = [];
-  await getErsTokenInfo();
-  await getIercTokenInfo();
+  await getTokensInfo();
   timer = setTimeout(() => {
     refresh();
   }, 15000);
@@ -79,7 +84,6 @@ const refresh = async () => {
 onMounted(async () => {
   await getEthereumUnitPrice();
   await refresh();
-  getErsTokenInfo();
 });
 
 onUnmounted(() => {
