@@ -1,13 +1,12 @@
 <script setup>
 import Header from '../../../components/Header.vue';
-import { onMounted, onUnmounted, reactive, ref } from 'vue';
-import { getErsVolumeInfo, getEthereumToUSD, getStatisticsByTick } from '../../../api/pow';
+import { onMounted, onUnmounted, ref } from 'vue';
+import { getEthereumToUSD, getStatisticsByTick } from '../../../api/pow';
 import { utils } from 'ethers';
 import { formatNumber } from '../../../util';
 import Block from './components/Block.vue';
 const audio = new Audio('/329.wav');
 let listInfo = ref([]);
-
 const getIercTokenInfo = () => {
   return getStatisticsByTick({
     limit: 11,

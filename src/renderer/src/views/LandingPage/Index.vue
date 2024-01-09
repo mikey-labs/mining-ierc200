@@ -4,19 +4,25 @@ import mint_icon from '../../assets/moudle/mint-icon.svg';
 import market_icon from '../../assets/moudle/market-icon.svg';
 import tools_icon from '../../assets/moudle/tools-icon.svg';
 import ers_icon from '../../assets/moudle/ers-icon.svg';
+import notify_icon from '../../assets/moudle/notify-icon.svg';
 import statistics_icon from '../../assets/moudle/statistics-icon.svg';
 import Header from '../../components/Header.vue';
 const router = useRouter();
 const modules = [
   {
-    icon: statistics_icon,
-    name: '市场看板',
-    url: '/statistics/main'
+    icon: notify_icon,
+    name: '短线提醒',
+    url: '/pow/monitor'
   },
   {
     icon: market_icon,
     name: '铭文市场',
     url: '/pow/main'
+  },
+  {
+    icon: statistics_icon,
+    name: '市场看板',
+    url: '/statistics/main'
   },
   // {
   //   icon: ers_icon,

@@ -157,21 +157,21 @@ const hexData = (item, gasPrice) => {
         v-for="(item, i) in data"
         :key="i"
         :class="{
-          highline: checkHighLine(item.value / item.amt)
+          highline: false //checkHighLine(item.value / item.amt)
         }"
       >
         <td>{{ item.tick }}</td>
         <td>{{ item.amt }}</td>
-        <td style="color: #8f78f7">${{ formatPrice(item.value / item.amt) }}</td>
+        <td style="color: #8f78f7">${{ formatPrice(item.value / item.amt, 4) }}</td>
         <td>{{ formatAddress(item.creator) }}</td>
         <td>
           <div style="color: #ae6605">
             <span style="color: #999; font-size: 12px">ETH:</span>
-            {{ formatNumber(item.value, 6) }}
+            {{ formatNumber(item.value, 4) }}
           </div>
           <div style="color: #8f78f7">
             <span style="color: #999; font-size: 12px">USD:</span>
-            {{ formatPrice(item.value) }}
+            {{ formatPrice(item.value, 2) }}
           </div>
         </td>
         <td>
