@@ -4,6 +4,7 @@ import Header from '../../../components/Header.vue';
 import { getEthereumToUSD, getIERC20OrderList } from '../../../api/pow';
 import Table from '../Main/components/Table.vue';
 import icon_refresh from '../../../assets/icon-refresh.svg';
+import icon_notification from '../../../assets/icon-notification.svg';
 import { formatNumber } from '../../../util';
 import Button from '../../../components/Button.vue';
 
@@ -47,9 +48,11 @@ const refresh = async () => {
   loading.value = false;
 };
 onMounted(async () => {
+  navigator.serviceWorker.register('sw.js');
   await getEthereumUnitPrice();
   await refresh();
 });
+const audio = new Audio('/329.wav');
 const checkOrder = (orders) => {
   const [firstOrder, secondOrder] = orders;
   const unitPrice1 = firstOrder.value / firstOrder.amt;
@@ -63,21 +66,7 @@ function notifyMe(order) {
   if (!('Notification' in window)) {
     return;
   }
-
-  // 再檢查使用者是否已經授權執行 Notification
-  else if (Notification.permission === 'granted') {
-    // 如果已經授權就可以直接新增 Notification 了!
-    addNotify(order);
-  }
-
-  // 否則，我們會需要詢問使用者是否開放權限
-  else if (Notification.permission !== 'denied') {
-    Notification.requestPermission().then((permission) => {
-      if (permission === 'granted') {
-        addNotify(order);
-      }
-    });
-  }
+  addNotify(order);
 
   // 如果使用者還是不同意授權執行 Notification
   // 最好還是進行適當的處理以避免繼續打擾使用者
@@ -86,12 +75,18 @@ const formatPrice = (value, dem = 6) => {
   return formatNumber(value * unitPrice.value, dem);
 };
 const addNotify = (order) => {
-  const notification = new Notification(`${order.tick} 新订单！`, {
-    vibrate: [200, 100, 200],
-    body: `数量：${order.amt}，总价：$${formatPrice(order.value, 2)}`
-  });
-  notification.addEventListener('click', () => {
-    window.open('https://www.ierc20.com/market/' + order.tick, '_blank');
+  Notification.requestPermission().then((permission) => {
+    if (permission === 'granted') {
+      navigator.serviceWorker.ready.then(function (registration) {
+        registration.showNotification(`${order.tick} 新订单！`, {
+          icon: 'icon.png',
+          vibrate: [200, 100, 200],
+          silent: false,
+          data: 'https://www.ierc20.com/market/' + order.tick,
+          body: `数量：${order.amt}，总价：$${formatPrice(order.value, 2)}`
+        });
+      });
+    }
   });
 };
 </script>
@@ -100,18 +95,22 @@ const addNotify = (order) => {
   <main>
     <Header title="短线提醒">
       <template #right>
-        <img
-          :class="{ animation: loading }"
-          class="refresh"
-          :src="icon_refresh"
-          alt=""
-          @click="refresh"
-        />
+        <div>
+          <img
+            :class="{ animation: loading }"
+            class="refresh"
+            :src="icon_refresh"
+            alt=""
+            @click="refresh"
+          />
+        </div>
       </template>
     </Header>
     <div class="container">
+      <div class="flex notify" @click="addNotify({ tick: 'ierc', amt: '400', value: '8' })">
+        <img :src="icon_notification" alt="" />
+      </div>
       <Table :data="tableData" :unit-price="unitPrice" />
-      <Button width="200px" @click="addNotify({ tick: 'ierc', amt: '400', value: '888' })">通知测试</Button>
     </div>
   </main>
 </template>
@@ -124,6 +123,11 @@ const addNotify = (order) => {
   to {
     transform: rotate(360deg);
   }
+}
+.notify {
+  margin-bottom: 16px;
+  cursor: pointer;
+  justify-content: right;
 }
 .refresh {
   cursor: pointer;
