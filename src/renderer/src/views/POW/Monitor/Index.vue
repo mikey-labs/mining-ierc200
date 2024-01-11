@@ -6,7 +6,6 @@ import Table from '../Main/components/Table.vue';
 import icon_refresh from '../../../assets/icon-refresh.svg';
 import icon_notification from '../../../assets/icon-notification.svg';
 import { formatNumber } from '../../../util';
-import Button from '../../../components/Button.vue';
 
 const unitPrice = ref(0);
 const ticks = ['ethi', 'ierc-m4', 'ierc', 'Serj', 'Sparkle Inscription'];
@@ -41,15 +40,15 @@ const loading = ref(false);
 const refresh = async () => {
   loading.value = true;
   clearTimeout(timer);
+  await getEthereumUnitPrice();
   await getOrderInfo();
   timer = setTimeout(() => {
     refresh();
-  }, 15000);
+  }, 20000);
   loading.value = false;
 };
 onMounted(async () => {
   navigator.serviceWorker.register('sw.js');
-  await getEthereumUnitPrice();
   await refresh();
 });
 const audio = new Audio('/329.wav');
@@ -107,8 +106,14 @@ const addNotify = (order) => {
       </template>
     </Header>
     <div class="container">
-      <div class="flex notify" @click="addNotify({ tick: 'ierc', amt: '400', value: '8' })">
-        <img :src="icon_notification" alt="" />
+      <div class="flex">
+        <div style="flex: 1;color: #ff5733;font-size: 15px ">
+          <span style="font-weight: bold;font-size: 18px">1</span>
+          ETH = <span style="font-weight: bold;font-size: 18px">{{ unitPrice }}</span> USD
+        </div>
+        <div class="flex notify" @click="addNotify({ tick: 'ierc', amt: '400', value: '8' })">
+          <img :src="icon_notification" alt="" />
+        </div>
       </div>
       <Table :data="tableData" :unit-price="unitPrice" />
     </div>

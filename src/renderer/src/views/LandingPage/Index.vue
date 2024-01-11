@@ -54,7 +54,6 @@ const gotoModule = (item) => {
         <div class="title">{{ item.name }}</div>
       </div>
     </div>
-    <img src="../../assets/main-bg.png" class="bg" />
   </main>
 </template>
 
@@ -96,15 +95,13 @@ main {
   .bg {
     content: '';
     position: absolute;
-    background: url('../../assets/main-bg.png') no-repeat;
     background-size: cover;
     left: 0;
     right: 0;
     bottom: 0;
     top: 0;
     z-index: 0;
-    filter: blur(10px);
-    background: rgba(0, 0, 0, 0.3);
+    filter: blur(30px);
   }
 }
 </style>
