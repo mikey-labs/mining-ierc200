@@ -8,14 +8,14 @@ import icon_notification from '../../../assets/icon-notification.svg';
 import { formatNumber } from '../../../util';
 
 const unitPrice = ref(0);
-const ticks = ['ethi', 'ierc-m4', 'ierc', 'Serj', 'Sparkle Inscription'];
+const ticks = ['ethpi', 'ierc'];
 const tableData = ref([]);
 const getOrderInfo = () => {
   const promiseAll = [];
   ticks.map((tick) => {
     promiseAll.push(
       getIERC20OrderList({
-        limit: 2,
+        limit: 3,
         minValue: '0.00005',
         offset: 0,
         status: 'list',
@@ -44,7 +44,7 @@ const refresh = async () => {
   await getOrderInfo();
   timer = setTimeout(() => {
     refresh();
-  }, 20000);
+  }, 5000);
   loading.value = false;
 };
 onMounted(async () => {
