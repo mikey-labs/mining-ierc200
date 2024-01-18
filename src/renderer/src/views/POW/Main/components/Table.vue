@@ -1,7 +1,7 @@
 <script setup>
 import { BigNumber, ethers, utils } from 'ethers';
 import { checkIsBuyPending } from '../../../../api/pow';
-import { encodeTransactionData,formatAddress, formatNumber } from '../../../../util';
+import { encodeTransactionData, formatAddress, formatNumber } from '../../../../util';
 import Popover from '../../../../components/Popover.vue';
 import { computed, ref } from 'vue';
 import Button from '../../../../components/Button.vue';
