@@ -68,6 +68,7 @@ const checkNewTick = () => {
     const storeTicks = localStorage.getItem(TICKS);
     if (code === 1) {
       tickNumber.value = ticks.list.length;
+      localStorage.setItem(TICKS, JSON.stringify(ticks.list));
       if (storeTicks) {
         const storeTicksList = JSON.parse(storeTicks);
         if (storeTicksList.length === ticks.list.length) return;
@@ -86,8 +87,6 @@ const checkNewTick = () => {
             showToast.value = true;
           }
         });
-      } else {
-        localStorage.setItem(TICKS, JSON.stringify(ticks.list));
       }
     }
     console.log(res.data);
