@@ -6,6 +6,7 @@ import Popover from '../../../../components/Popover.vue';
 import { computed, ref } from 'vue';
 import Button from '../../../../components/Button.vue';
 import { ETHEREUM_RPC_MAIN, IERC20_ADDRESS } from '../../../../config/constant';
+import { bnUtils } from '../../../Mint/Runner/bn';
 
 const props = defineProps({
   data: {
@@ -162,7 +163,10 @@ const hexData = (item, gasPrice) => {
       >
         <td>{{ item.tick }}</td>
         <td>{{ item.amt }}</td>
-        <td style="color: #8f78f7">${{ formatPrice(item.value / item.amt, 4) }}</td>
+        <td style="color: #8f78f7">
+          ${{ formatPrice(item.value / item.amt, 4) }}
+          <div>{{ bnUtils.toWei(item.value / item.amt, 9).toFixed(0) }} Gwei</div>
+        </td>
         <td>{{ formatAddress(item.creator) }}</td>
         <td>
           <div style="color: #ae6605">
@@ -176,8 +180,8 @@ const hexData = (item, gasPrice) => {
         </td>
         <td>
           <div class="flex">
-            <div class="op" @click="gotoMarket(item)">查看</div>
-            <div class="op" style="margin-left: 8px" @click="pay(item)">去市场</div>
+            <!--            <div class="op" @click="gotoMarket(item)">查看</div>-->
+            <div class="op" style="margin-left: 8px" @click="pay(item)">市场</div>
           </div>
         </td>
       </tr>

@@ -8,7 +8,7 @@ import icon_notification from '../../../assets/icon-notification.svg';
 import { formatNumber } from '../../../util';
 
 const unitPrice = ref(0);
-const ticks = ['ethpi', 'ethi', 'ierc-m4', 'ierc', 'Sparkle Inscription'];
+const ticks = ['ensc', 'ethi', 'ierc-m4', 'ierc', 'Sparkle Inscription'];
 const tableData = ref([]);
 const getOrderInfo = () => {
   const promiseAll = [];
