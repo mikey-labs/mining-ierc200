@@ -8,7 +8,7 @@ import icon_notification from '../../../assets/icon-notification.svg';
 import { formatNumber } from '../../../util';
 
 const unitPrice = ref(0);
-const ticks = ['ethpi','ethi', 'ierc-m4', 'ierc', 'Sparkle Inscription'];
+const ticks = ['ethpi', 'ethi', 'ierc-m4', 'ierc', 'Sparkle Inscription'];
 const tableData = ref([]);
 const getOrderInfo = () => {
   const promiseAll = [];
@@ -82,7 +82,10 @@ const addNotify = (order) => {
           vibrate: [200, 100, 200],
           silent: false,
           data: 'https://www.ierc20.com/market/' + order.tick,
-          body: `数量：${order.amt}，总价：$${formatPrice(order.value, 2)}`
+          body: `数量：${order.amt}，单价：$${formatPrice(
+            order.amt / order.value,
+            4
+          )}，总价：$${formatPrice(order.value, 2)}`
         });
       });
     }
@@ -107,9 +110,9 @@ const addNotify = (order) => {
     </Header>
     <div class="container">
       <div class="flex">
-        <div style="flex: 1;color: #ff5733;font-size: 15px ">
-          <span style="font-weight: bold;font-size: 18px">1</span>
-          ETH = <span style="font-weight: bold;font-size: 18px">{{ unitPrice }}</span> USD
+        <div style="flex: 1; color: #ff5733; font-size: 15px">
+          <span style="font-weight: bold; font-size: 18px">1</span>
+          ETH = <span style="font-weight: bold; font-size: 18px">{{ unitPrice }}</span> USD
         </div>
         <div class="flex notify" @click="addNotify({ tick: 'ierc', amt: '400', value: '8' })">
           <img :src="icon_notification" alt="" />
