@@ -12,7 +12,7 @@ export const getEthereumToUSD = () => {
 };
 
 export const getStatisticsByTick = (param) => {
-  return fetch.post('ticks/list', param);
+  return fetch.post('ticks', param);
 };
 
 export const checkIsBuyPending = (param) => {

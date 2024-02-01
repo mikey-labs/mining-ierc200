@@ -7,9 +7,11 @@ import icon_refresh from '../../../assets/icon-refresh.svg';
 import icon_notification from '../../../assets/icon-notification.svg';
 import { formatNumber } from '../../../util';
 import Toast from '../../../components/Toast.vue';
+import Input from '../../../components/Input.vue';
+import Button from '../../../components/Button.vue';
 
 const unitPrice = ref(0);
-const ticks = ['ensc', 'ethi', 'ierc-m4', 'ierc', 'Sparkle Inscription'];
+const ticks = ['ensc', 'ierc-m4', 'ierc', 'ethpi'];
 const tableData = ref([]);
 const getOrderInfo = () => {
   const promiseAll = [];
@@ -38,15 +40,25 @@ const getEthereumUnitPrice = () => {
 };
 let timer;
 const loading = ref(false);
+const checkEthPrice = () => {
+  if (Number(ethPrice.value) && unitPrice.value > Number(ethPrice.value)) {
+    addNotify({
+      title: 'eth涨幅达到阈值',
+      data: '',
+      body: `价格为${unitPrice.value}`
+    });
+  }
+};
 const refresh = async () => {
   loading.value = true;
   clearTimeout(timer);
 
   await getEthereumUnitPrice();
+  checkEthPrice();
   await getOrderInfo();
   timer = setTimeout(() => {
     refresh();
-  }, 5000);
+  }, 15000);
   loading.value = false;
 };
 const TICKS = 'TICKS';
@@ -64,15 +76,18 @@ const checkNewTick = () => {
     limit: 10000,
     offset: 0
   }).then((res) => {
-    const { data: ticks, code } = res;
+    const {
+      data: { list },
+      code
+    } = res;
     const storeTicks = localStorage.getItem(TICKS);
     if (code === 1) {
-      tickNumber.value = ticks.list.length;
-      localStorage.setItem(TICKS, JSON.stringify(ticks.list));
+      tickNumber.value = list.length;
+      localStorage.setItem(TICKS, JSON.stringify(list));
       if (storeTicks) {
         const storeTicksList = JSON.parse(storeTicks);
-        if (storeTicksList.length === ticks.list.length) return;
-        ticks.list.map((inscription) => {
+        if (storeTicksList.length === list.length) return;
+        list.map((inscription) => {
           const find = storeTicksList.find((item) => item.tick === inscription.tick);
           if (!find) {
             addNotify({
@@ -106,10 +121,15 @@ const closeToast = () => {
   localStorage.removeItem(NEW_TICK);
   showToast.value = false;
 };
+const ethPrice = ref('0');
+const getStoreEthPrice = () => {
+  ethPrice.value = localStorage.getItem('storeEthPrice') || '';
+};
 onMounted(async () => {
   navigator.serviceWorker.register('sw.js');
   await refresh();
-  checkNewTick();
+  // checkNewTick();
+  getStoreEthPrice();
 });
 const checkOrder = (orders) => {
   const [firstOrder, secondOrder] = orders;
@@ -138,6 +158,9 @@ function notifyMe(order) {
 }
 const formatPrice = (value, dem = 6) => {
   return formatNumber(value * unitPrice.value, dem);
+};
+const saveEthPrice = () => {
+  localStorage.setItem('storeEthPrice', ethPrice.value);
 };
 const addNotify = (info) => {
   const { title, data, body } = info;
@@ -177,9 +200,12 @@ const addNotify = (info) => {
         <div style="flex: 1; color: #ff5733; font-size: 15px">
           <span style="font-weight: bold; font-size: 18px">1</span>
           ETH = <span style="font-weight: bold; font-size: 18px">{{ unitPrice }}</span> USD
-          <span style="padding-left: 30px;">铭文总数：{{ tickNumber }}</span>
+          <!--          <span style="padding-left: 30px;">铭文总数：{{ tickNumber }}</span>-->
         </div>
-
+        <div class="flex" style="width: 300px; margin-right: 200px">
+          <Input height="40px" v-model="ethPrice" placeholder="eth报警价格" />
+          <Button @click="saveEthPrice()" width="100px" height="40px">保存</Button>
+        </div>
         <div
           class="flex notify"
           @click="addNotify({ title: '测试通知', body: '测试内容', data: '测试data' })"
