@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue';
 import Header from '../../../components/Header.vue';
-import { getIERC20OrderList, getStatisticsByTick } from '../../../api/pow';
+import {getEthereumToUSD, getIERC20OrderList, getStatisticsByTick} from '../../../api/pow';
 import Table from '../Main/components/Table.vue';
 import icon_refresh from '../../../assets/icon-refresh.svg';
 import icon_notification from '../../../assets/icon-notification.svg';
@@ -35,15 +35,15 @@ const getOrderInfo = () => {
   });
 };
 const getEthereumUnitPrice = () => {
-  return get_api_v5_market_trades({
-    instId: 'ETH-USDT',
-    limit: 1
-  }).then((res) => {
-    unitPrice.value = +res.data[0].px;
-  });
-  // return getEthereumToUSD().then((data) => {
-  //   unitPrice.value = +data.data;
+  // return get_api_v5_market_trades({
+  //   instId: 'ETH-USDT',
+  //   limit: 1
+  // }).then((res) => {
+  //   unitPrice.value = +res.data[0].px;
   // });
+  return getEthereumToUSD().then((data) => {
+    unitPrice.value = +data.data;
+  });
 };
 const loading = ref(false);
 const checkEthPrice = () => {
