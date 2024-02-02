@@ -4,6 +4,7 @@ import MintMain from '../views/Mint/Main/Index.vue';
 const routes = [
   { path: '/', component: LandingPage },
   { path: '/mint/main', component: MintMain },
+  { path: '/eth/main', component: ()=>import('../views/Eth/Main/Index.vue')},
   { path: '/mint/runner', component: ()=>import('../views/Mint/Runner/Index.vue') },
   { path: '/pow/main', component: ()=>import('../views/POW/Main/Index.vue') },
   { path: '/ers/main', component: ()=>import('../views/ERS/Main/Index.vue') },

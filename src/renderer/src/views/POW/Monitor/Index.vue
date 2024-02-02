@@ -1,7 +1,7 @@
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, onUnmounted } from 'vue';
 import Header from '../../../components/Header.vue';
-import { getEthereumToUSD, getIERC20OrderList, getStatisticsByTick } from '../../../api/pow';
+import { getIERC20OrderList, getStatisticsByTick } from '../../../api/pow';
 import Table from '../Main/components/Table.vue';
 import icon_refresh from '../../../assets/icon-refresh.svg';
 import icon_notification from '../../../assets/icon-notification.svg';
@@ -9,6 +9,7 @@ import { formatNumber } from '../../../util';
 import Toast from '../../../components/Toast.vue';
 import Input from '../../../components/Input.vue';
 import Button from '../../../components/Button.vue';
+import { get_api_v5_market_trades } from '../../../util/okax';
 
 const unitPrice = ref(0);
 const ticks = ['ensc', 'ierc-m4', 'ierc', 'ethpi'];
@@ -34,11 +35,16 @@ const getOrderInfo = () => {
   });
 };
 const getEthereumUnitPrice = () => {
-  return getEthereumToUSD().then((data) => {
-    unitPrice.value = +data.data;
+  return get_api_v5_market_trades({
+    instId: 'ETH-USDT',
+    limit: 1
+  }).then((res) => {
+    unitPrice.value = +res.data[0].px;
   });
+  // return getEthereumToUSD().then((data) => {
+  //   unitPrice.value = +data.data;
+  // });
 };
-let timer;
 const loading = ref(false);
 const checkEthPrice = () => {
   if (Number(ethPrice.value) && unitPrice.value > Number(ethPrice.value)) {
@@ -49,12 +55,12 @@ const checkEthPrice = () => {
     });
   }
 };
+let timer, unitPriceTimer;
+
 const refresh = async () => {
   loading.value = true;
   clearTimeout(timer);
 
-  await getEthereumUnitPrice();
-  checkEthPrice();
   await getOrderInfo();
   timer = setTimeout(() => {
     refresh();
@@ -125,11 +131,24 @@ const ethPrice = ref('0');
 const getStoreEthPrice = () => {
   ethPrice.value = localStorage.getItem('storeEthPrice') || '';
 };
+const intervalCheckEthPrice = async () => {
+  clearTimeout(unitPriceTimer);
+  await getEthereumUnitPrice();
+  unitPriceTimer = setTimeout(() => {
+    intervalCheckEthPrice();
+  }, 5000);
+  checkEthPrice();
+}
 onMounted(async () => {
-  navigator.serviceWorker.register('sw.js');
+
+  intervalCheckEthPrice();
   await refresh();
   // checkNewTick();
   getStoreEthPrice();
+});
+onUnmounted(() => {
+  clearTimeout(unitPriceTimer);
+  clearTimeout(timer);
 });
 const checkOrder = (orders) => {
   const [firstOrder, secondOrder] = orders;
@@ -199,12 +218,13 @@ const addNotify = (info) => {
       <div class="flex">
         <div style="flex: 1; color: #ff5733; font-size: 15px">
           <span style="font-weight: bold; font-size: 18px">1</span>
-          ETH = <span style="font-weight: bold; font-size: 18px">{{ unitPrice }}</span> USD
+          ETH =
+          <span style="font-weight: bold; font-size: 18px">{{ unitPrice.toFixed(2) }}</span> USD
           <!--          <span style="padding-left: 30px;">铭文总数：{{ tickNumber }}</span>-->
         </div>
         <div class="flex" style="width: 300px; margin-right: 200px">
-          <Input height="40px" v-model="ethPrice" placeholder="eth报警价格" />
-          <Button @click="saveEthPrice()" width="100px" height="40px">保存</Button>
+          <Input v-model="ethPrice" height="40px" placeholder="eth报警价格" />
+          <Button width="100px" height="40px" @click="saveEthPrice()">保存</Button>
         </div>
         <div
           class="flex notify"

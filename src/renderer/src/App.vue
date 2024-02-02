@@ -1,4 +1,6 @@
-<script setup></script>
+<script setup>
+navigator.serviceWorker.register('sw.js');
+</script>
 
 <template>
   <RouterView> </RouterView>
