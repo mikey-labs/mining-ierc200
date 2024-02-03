@@ -19,10 +19,12 @@ const intervalCheckEthPrice = async () => {
     .then((res) => {
       if (res && res.data) ethPrice.value = +res.data[0].px;
     })
-    .catch((e) => {});
+    .catch(() => {});
+  // await getPendingOrders();
+
   unitPriceTimer = setTimeout(() => {
     intervalCheckEthPrice();
-  }, 8000);
+  }, 10000);
   checkEthPrice();
 };
 const checkEthPrice = () => {
@@ -48,14 +50,30 @@ const saveEthPrice = () => {
 const saveMinEthPrice = () => {
   localStorage.setItem('storeMinEthPrice', storeMinEthPrice.value);
 };
-const getPendingOrders = () => {
+let currentVolume = ref(0);
+let currentDate = ref('');
+const getPendingOrders = async () => {
   getTakerVolume({
     instType: 'SPOT',
-    ccy: 'ETH'
-  });
+    ccy: 'ETH',
+    // begin:Date.now().toString(),
+    // end:(Date.now() - 1000 * 60 * 10).toString()
+  })
+    .then((data) => {
+      const list = data.data;
+      let sellTotal = 0,
+        buyTotal = 0;
+      // eslint-disable-next-line no-unused-vars
+      list.map(([_, sell, buy]) => {
+        sellTotal += +sell;
+        buyTotal += +buy;
+      });
+      currentDate.value = new Date(+list[0][0]).toLocaleString();
+      currentVolume.value = buyTotal - sellTotal;
+    })
+    .catch(() => {});
 };
 onMounted(async () => {
-  getPendingOrders();
   await intervalCheckEthPrice();
   storeEthPrice.value = localStorage.getItem('storeEthPrice') || '';
   storeMinEthPrice.value = localStorage.getItem('storeMinEthPrice') || '';
