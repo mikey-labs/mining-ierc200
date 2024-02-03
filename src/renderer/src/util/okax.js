@@ -6,10 +6,11 @@
 import axios from 'axios-https-proxy-fix';
 import HmacSHA256 from 'crypto-js/hmac-sha256';
 import Base64 from 'crypto-js/enc-base64';
-const apikey = "24f98d51-3af6-403c-93ba-923ebc8e94c8"
-const secretkey = "CEF1396A23410EB41AB60524133B50B8"
+const apikey = '24f98d51-3af6-403c-93ba-923ebc8e94c8';
+const secretkey = 'CEF1396A23410EB41AB60524133B50B8';
 const passphrase = 'Zheng85421!';
-const rest = 'https://www.okx.com/';
+// const rest = 'https://www.okx.com/';
+const rest = 'https://aws.okx.com/';
 const appjson = 'application/json';
 const proxy = {
   host: '127.0.0.1',
@@ -276,15 +277,28 @@ export async function post_api_v5_trade_order({
     })
   );
 }
-export async function get_api_v5_market_trades({
-  instId,
-  limit
-}) {
+
+//获取最新成交价格
+export async function get_api_v5_market_trades({ instId, limit }) {
   return await http(
     cleanObj({
       instId: instId,
       limit,
-      t:Date.now().toString()
+      t: Date.now().toString()
+    })
+  );
+}
+
+//获取未成交价格GET /api/v5/sprd/orders-pending
+export async function get_api_v5_rubik_stat_takerVolume({ ccy, instType, begin, end, period }) {
+  return await http(
+    cleanObj({
+      ccy,
+      instType,
+      end,
+      begin,
+      period,
+      t: Date.now().toString()
     })
   );
 }

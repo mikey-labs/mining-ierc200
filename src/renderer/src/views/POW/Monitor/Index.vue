@@ -5,11 +5,10 @@ import {getEthereumToUSD, getIERC20OrderList, getStatisticsByTick} from '../../.
 import Table from '../Main/components/Table.vue';
 import icon_refresh from '../../../assets/icon-refresh.svg';
 import icon_notification from '../../../assets/icon-notification.svg';
-import { formatNumber } from '../../../util';
+import {addNotify, formatNumber} from '../../../util';
 import Toast from '../../../components/Toast.vue';
 import Input from '../../../components/Input.vue';
 import Button from '../../../components/Button.vue';
-import { get_api_v5_market_trades } from '../../../util/okax';
 
 const unitPrice = ref(0);
 const ticks = ['ensc', 'ierc-m4', 'ierc', 'ethpi'];
@@ -180,22 +179,6 @@ const formatPrice = (value, dem = 6) => {
 };
 const saveEthPrice = () => {
   localStorage.setItem('storeEthPrice', ethPrice.value);
-};
-const addNotify = (info) => {
-  const { title, data, body } = info;
-  Notification.requestPermission().then((permission) => {
-    if (permission === 'granted') {
-      navigator.serviceWorker.ready.then(function (registration) {
-        registration.showNotification(title, {
-          icon: 'icon.png',
-          vibrate: [200, 100, 200],
-          silent: false,
-          data: data,
-          body: body
-        });
-      });
-    }
-  });
 };
 </script>
 

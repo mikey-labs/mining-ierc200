@@ -22,3 +22,20 @@ export const decodeTransactionData = (hex) => {
 export const encodeTransactionData = (data) => {
   return utils.hexlify(utils.toUtf8Bytes(data));
 };
+
+export const addNotify = (info) => {
+  const { title, data, body } = info;
+  Notification.requestPermission().then((permission) => {
+    if (permission === 'granted') {
+      navigator.serviceWorker.ready.then(function (registration) {
+        registration.showNotification(title, {
+          icon: 'icon.png',
+          vibrate: [200, 100, 200],
+          silent: false,
+          data: data,
+          body: body
+        });
+      });
+    }
+  });
+};

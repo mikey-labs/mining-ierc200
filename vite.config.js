@@ -4,7 +4,7 @@ export default defineConfig(({ command, mode }) => {
   return {
     plugins: [vue()],
     root: './src/renderer/',
-    base: './',
+    base: '/app/',
     build: {
       emptyOutDir: true,
       target: 'chrome58',
